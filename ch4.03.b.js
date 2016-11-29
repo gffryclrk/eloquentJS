@@ -7,3 +7,8 @@ var arrayToList = function(array){
 	}
 	return list;
 }
+
+var listToArray = function(list, array){
+	if(array == undefined) var array = [];
+	array.push(list.value);
+}
