@@ -18,24 +18,22 @@
 
 var deepEqual = function(obj1, obj2){
 
-	var equal = new Boolean(false);
+	var equal = true;
 	
 	if(typeof obj1 == "object" && obj1 !== null){
 		for(var property in obj1){
 			if( obj1.hasOwnProperty(property) ){
-				if(typeof obj1[property] == "objet" && obj1[property] !== null){
-					if(deepEqual(obj1[property], obj2[property])){
-						equal = true;
-					}else{
+				if(typeof obj1[property] == "object" && obj1[property] !== null){
+					if(!deepEqual(obj1[property], obj2[property])){
 						equal = false;
 					}
-				}else if( obj1[property] == obj2[property] ){
-					equal = true;
+				}else if( obj1[property] !== obj2[property] ){
+					equal = false;
 				}
 			}
 		}
-	}else if(obj1 == obj2){
-		equal = true;
+	}else if(obj1 !== obj2){
+		equal = false;
 	}
 	return equal;
 }
