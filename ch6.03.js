@@ -1,3 +1,7 @@
+// Disclaimer: This was my first attempted solution to this exercise. 
+// The code functions and outputs the desired result but I didn't interpret the problem the way that the author
+// perhaps would have liked. After  further reading into the question I wrote another solution which I believe is closer to being correct (ch6.03.b.js).
+
 function Sequence(sequence) {
 	// this.sequence = sequence.map(function(seq){
 	// 	return seq;	
