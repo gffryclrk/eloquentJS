@@ -67,7 +67,7 @@ BouncingCritter.prototype.act = function(view){
 
 // The World Object
 
-function elementFromChar(legend, ch) { //example legend: {"#": Wall, "o": BouncingCritter}
+function elementFromChar(legend, ch) { //example legend: {"#": Wall, "o": BouncingCritter}. Receives legend and line
 	if (ch == " "){
 		return null;
 	}
@@ -76,13 +76,13 @@ function elementFromChar(legend, ch) { //example legend: {"#": Wall, "o": Bounci
 	return element;
 }
 
-function World(map, legend) {
-	var grid = new Grid(map[0].length, map.length);
+function World(map, legend) { //example in book initializes world = new World(plan, {"#": Wall, "o": BouncingCritter});
+	var grid = new Grid(map[0].length, map.length); //creates empty array with x * y available spaces
 	this.grid = grid;
-	this.legend = legend;
+	this.legend = legend; //takes legend passed from initialization; Example above (line 70)
 
-	map.forEach(function(line, y){
-		for (var x = 0; x < line.length; x+= 1){
+	map.forEach(function(line, y){ //map = plan array above
+		for (var x = 0; x < line.length; x+= 1){ //goes through each index in array and sets element = plan value "#", " ", or "o"
 			grid.set(new Vector(x, y), elementFromChar(legend, line[x]));
 		}
 	});
@@ -109,3 +109,28 @@ World.prototype.toString = function() {
 };
 
 function Wall() {}
+
+// This and Its Scope
+
+Grid.prototype.forEach = function(f, context){
+	for (var y = 0; y < this.height; y+= 1){
+			for (var x = 0; x < this.width; x+= 1){
+				var value = this.space[x + y * this.width];
+				if (value != null) {
+					f.call(context, value, new Vector(x, y));
+				}
+			}
+		}	
+};
+
+// Animating Life
+
+World.prototype.turn = function(){
+	var acted  = [];
+	this.grid.forEach(function(critter, vector){
+		if (critter.act && acted.indexOf(critter) == =1){
+			acted.push(critter);
+			this.letAct(critter, vector);
+		}
+	}, this);	
+};
