@@ -58,11 +58,11 @@ function BouncingCritter() {
 	this.direction = randomElement(directionNames);
 };
 
-BouncingCritter.prototype.act = function(view){
-	if (view.look(this.direction) != " ") {
-		this.direction = view.find(" ") || "s";
+BouncingCritter.prototype.act = function(view){ //act method accepts view object and paasses this object a direction variable (created from randomized selection of all possible directions)
+	if (view.look(this.direction) != " ") { //if random direction is not empty space (why? can only move into empty space), 
+		this.direction = view.find(" ") || "s";  //find empty space or else set direction = south
 	}
-	return {type: "move", direction: this.direction};
+	return {type: "move", direction: this.direction}; //return object
 };
 
 // The World Object
@@ -110,6 +110,8 @@ World.prototype.toString = function() {
 
 function Wall() {}
 
+var world = new World(plan, {"#": Wall, "o": BouncingCritter});
+
 // This and Its Scope
 
 Grid.prototype.forEach = function(f, context){
@@ -127,17 +129,20 @@ Grid.prototype.forEach = function(f, context){
 
 World.prototype.turn = function(){
 	var acted  = [];
-	this.grid.forEach(function(critter, vector){
-		if (critter.act && acted.indexOf(critter) == =1){
+	this.grid.forEach(function(critter, vector){ //this.grid = plan array 
+		if (critter.act && acted.indexOf(critter) == =1){ //iterates over entire array looking for element objects with act method. Executes when found
 			acted.push(critter);
-			this.letAct(critter, vector);
+			this.letAct(critter, vector); //vector passed is obtained from forEach function: Nested loops go through entire array searching for non null elements.
+			// when element (object) is found the forEach function calls the provided function (beginning line 132) with three arguments: context, value and new Vector(x,y) (line 121).
+			// The function called in this case accepts value (critter) and vector (new Vector(x, y)). This is only called on element objects with an act method which are not part of the acted array (line 133).
 		}
 	}, this);	
 };
 
-WOrld.prototype.letAct = function(critter, vector){
-	var action = critter.act(new View(this, vector));
-	if (action && action.type == "move") {
+World.prototype.letAct = function(critter, vector){  //who is acting and where? Whom: Object, where: Vector
+	var action = critter.act(new View(this, vector)); //initializes new View object using this object as world. The vector is the current coordinates of the object. 
+	if (action && action.type == "move") {  //BouncingCritter has only one action: move, Act method accepts object (instance of BouncingCritter) and vector (current location)
+		// the critter object's act method essentailly chooses a random empty space " " from squares adjacent to itself and chooses that as a destination.
 		var dest = this.checkDestination(action, vector);
 		if (dest && this.grid.get(dest) == null) {
 			this.grid.set(vector, null);
@@ -146,25 +151,26 @@ WOrld.prototype.letAct = function(critter, vector){
 	}	
 };
 
-World.prototype.checkDestination = function(action, veector){
-	if (directions.hasOwnProperty(action.direction)) {
-		var dest = vector.plus(directions[action.direction]);
+World.prototype.checkDestination = function(action, vector){
+	if (directions.hasOwnProperty(action.direction)) { //verifies that direction passed is, infact, a valid direction (property of directions array)
+		var dest = vector.plus(directions[action.direction]); //creates destination vector by passing supplied vector (critter's location in letAct method) to addition method.
+		// vector.plus method then adds directional vector (i.e n = (0, -1) to current location vector
 		if (this.grid.isInside(dest)) {
-			return dest;
+			return dest; //returns destination vector as long as destination vector is within grid dimensions (x <= width, y <= height)
 		}
 	}	
 };
 
-function View(world, vector) {
+function View(world, vector) { //this view object represents what is in the proximity of other objects. I.E checks adjacent locations using methods.
 	this.world = world;
 	this.vector = vector;
 }
-View.prototype.look = function(dir){
-	var target = this.vector.plus(directions[dir]);
-	if (this.world.grid.isInside(target)) {
+View.prototype.look = function(dir){ //look method accepts direction variable (string: "n", "ne" etc) 
+	var target = this.vector.plus(directions[dir]); //adds vector equivalent of dir string (ie. n = 0,-1) to get vector of new location
+	if (this.world.grid.isInside(target)) { //if the target vector is inside the "world", i.e x <= width && y <= height it returns the object currently in that space
 		return charFromElement(this.world.grid.get(target));
 	}else{
-		return "#";
+		return "#"; //otherwise returns "#" which is an empty Wall object. 
 	}
 };
 View.prototype.findAll = function(ch){
