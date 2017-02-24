@@ -28,7 +28,7 @@ function Grid(width, height) {
 	this.width = width;
 	this.height = height;
 }
-Grid.prototype.inInside = function(vector){
+Grid.prototype.isInside = function(vector){
 	return vector.x >= 0 && vector.x < this.width && vector.y >= 0 && vector.y < this.height;
 };
 Grid.prototype.get = function(vector){
@@ -88,11 +88,11 @@ function World(map, legend) { //example in book initializes world = new World(pl
 	});
 }
 
-function charFromElement(element) {
+function charFromElement(element) { //accepts element as argument (value of World array at specific location index). 
 	if (element == null) {
 		return " ";
 	}else{
-		return element.originChar;
+		return element.originChar; //originChar value contained within object at element index when set.
 	}
 }
 
@@ -130,7 +130,7 @@ Grid.prototype.forEach = function(f, context){
 World.prototype.turn = function(){
 	var acted  = [];
 	this.grid.forEach(function(critter, vector){ //this.grid = plan array 
-		if (critter.act && acted.indexOf(critter) == =1){ //iterates over entire array looking for element objects with act method. Executes when found
+		if (critter.act && acted.indexOf(critter) == -1){ //iterates over entire array looking for element objects with act method. Executes when found
 			acted.push(critter);
 			this.letAct(critter, vector); //vector passed is obtained from forEach function: Nested loops go through entire array searching for non null elements.
 			// when element (object) is found the forEach function calls the provided function (beginning line 132) with three arguments: context, value and new Vector(x,y) (line 121).
@@ -165,27 +165,60 @@ function View(world, vector) { //this view object represents what is in the prox
 	this.world = world;
 	this.vector = vector;
 }
-View.prototype.look = function(dir){ //look method accepts direction variable (string: "n", "ne" etc) 
+View.prototype.look = function(dir){ //look method accepts direction variable (string: "n", "ne" etc) which is converted into vector equivalent
 	var target = this.vector.plus(directions[dir]); //adds vector equivalent of dir string (ie. n = 0,-1) to get vector of new location
 	if (this.world.grid.isInside(target)) { //if the target vector is inside the "world", i.e x <= width && y <= height it returns the object currently in that space
-		return charFromElement(this.world.grid.get(target));
+		return charFromElement(this.world.grid.get(target)); //calls charFromElement function and passes the element value at target x,y (vector calculated using .plus method, array index obtained within .get). 
 	}else{
-		return "#"; //otherwise returns "#" which is an empty Wall object. 
+		return "#"; //otherwise returns "#" which is the Wall object. 
 	}
 };
 View.prototype.findAll = function(ch){
 	var found = [];	
-	for (var dir in directions){
-		if (this.look(dir) == ch) {
+	for (var dir in directions){ //for each direction in direction set (n, nw, etc)
+		if (this.look(dir) == ch) { //calls the look method on each possible direction. If look returns value that is being "looked for" it is added to found array.
 			found.push(dir);
 		}
 	}
-	return found;
+	return found; //returns array of all directions that have adjacent square containing character which was passed to method
 };
-View.prototype.find = function(ch){
-	var found = this.findAll(ch);
+View.prototype.find = function(ch){ //find function accepts string
+	var found = this.findAll(ch); //calls findAll method with string argument passed
 	if (found.length == 0) {
 		return null;
 	}
-	return randomElement(found)	;
+	return randomElement(found); //if findAll method returns array containing found string characters return the array. Otherwise return null. 
+};
+
+// It Moves
+
+// Commented out so that it doesn't print out a bunch of big chunks to console.
+// for (var i = 0; i < 5; i+= 1){
+// 	world.turn();
+// 	console.log(world.toString());
+// }
+
+// More life forms
+
+function dirPlus(dir, n) { // direction is current direction wheras n is multiples of 45 degrees clockwise. i.e 2 * n = 90 degrees clockwise
+	var index = directionNames.indexOf(dir); // var directionNames = "n ne e se s sw w nw".split(" ");
+	return directionNames[(index + n + 8) % 8]; // adds index of current direction passed as argument to number of 45 degree clockwise rotations. 
+	// Adds total quantity of possible clockwise rotations (8) and divides by 8. so North, (0), with a 90 degree clockwise rotation (2)
+	// added to total amount of degrees (360/45 = 8)
+}
+
+function WallFollower() {
+	this.dir = "s";
+}
+
+WallFollower.prototype.act = function(view){ //accepts view object
+	var start = this.dir; // "s"
+	if (view.look(dirPlus(this.dir, -3)) != " ") { //passes look method square 
+		start = this.dir = dirPlus(this.dir, -2);
+	}
+	while (view.look(this.dir) != " "){
+		this.dir = dirPlus(this.dir, 1);
+		if (this.dir == start) { break; }
+	}
+	return {type: "move", direction: this.dir};
 };
