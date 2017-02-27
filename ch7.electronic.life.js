@@ -204,7 +204,7 @@ function dirPlus(dir, n) { // direction is current direction wheras n is multipl
 	var index = directionNames.indexOf(dir); // var directionNames = "n ne e se s sw w nw".split(" ");
 	return directionNames[(index + n + 8) % 8]; // adds index of current direction passed as argument to number of 45 degree clockwise rotations. 
 	// Adds total quantity of possible clockwise rotations (8) and divides by 8. so North, (0), with a 90 degree clockwise rotation (2)
-	// added to total amount of degrees (360/45 = 8)
+	// added to total amount of degrees (360/45 = 8) and gets remainder. (0 + 2 + 8) / 8 = 10 / 8 = 1r2. r = 2, e. 
 }
 
 function WallFollower() {
@@ -212,13 +212,53 @@ function WallFollower() {
 }
 
 WallFollower.prototype.act = function(view){ //accepts view object
+	// This critter's act prototype was a bit for me to wrap my head around.
+	// The first difficulty I had was with the modulus math contained within dirPlus which eventually I was able to get my head around (thanks to Khan Academy).
+	// The next was how the directional array converts to the 2d grid with directions. I was able to do this by working it all out on paper with examples.
+	// Essentially the critter heads forward until the space in front of him isn't empty. He then looks for an empty space by searching clockwise (the while loop).
+	// 
+	// The if(view.look(dirPlus(this.dir, -3)) !== " ") conditional below checks to see that the critter just came from a wall and he isn't just floating in space.
+	// Although this is explained in the text I didn't fully understand how it worked. Essentially the if statement checks to see that he is moving from a space
+	// adjacent to a space that contains something ( a wall or another critter). This is obtained by checking the square of the space -3 directions. So if he is heading 
+	// SOUTH, 3 spaces counter clockwise will be the square NORTH EAST of where he is prior to the move. 
+	// In the case that an object is found ( != " " ) this.dir is set to -2. If he can move in that direction he will, otherwise the while loop immediately starts spinning
+	// him in the other direction (clockwise).
+	
 	var start = this.dir; // "s"
-	if (view.look(dirPlus(this.dir, -3)) != " ") { //passes look method square 
-		start = this.dir = dirPlus(this.dir, -2);
+	if (view.look(dirPlus(this.dir, -3)) != " ") { 
+		start = this.dir = dirPlus(this.dir, -2);	
+		
 	}
+	// The loop below facilitates the critter's search for an empty square when he encounters the square that he is travelling to is occupied. 
+	// If he does a full 360 degree spin and doesn't find anything the loop exists and he tries to move in his direction.
+	// He might not be able to do this if he is blocked into a corner or something but I guess he tries anyway (and is denied by the letAct method)
 	while (view.look(this.dir) != " "){
 		this.dir = dirPlus(this.dir, 1);
 		if (this.dir == start) { break; }
 	}
 	return {type: "move", direction: this.dir};
+};
+
+// A More Lifelike Simulation
+
+function LifelikeWorld(map, legend) {
+	World.call(this, map, legend);
+}
+LifelikeWorld.prototype = Object.create(World.prototype);
+
+var actionTypes = Object.create(null);
+
+LifelikeWorld.prototype.letAct = function(critter, vector) {
+	var action = critter.act(new View(this, vector));
+	var handled = action &&
+		action.type in actionTypes &&
+		actionTypes[action.type].call(this, critter, vector, action);
+
+	if(!handled) {
+		critter.energy -= 0.2;
+		if(critter.energy <= 0){
+			this.grid.set(vector, null);
+		}
+
+	}
 };
