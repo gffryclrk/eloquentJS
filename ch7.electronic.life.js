@@ -262,3 +262,127 @@ LifelikeWorld.prototype.letAct = function(critter, vector) {
 
 	}
 };
+
+// Action Handlers
+
+actionTypes.grow = function(critter){
+	critter.energy += 0.5;
+	return true;	
+};
+
+actionTypes.move = function(critter, vector, action){
+	var dest = this.checkDestination(action, vector);
+	if (dest == null ||
+		  critter.energy <= 1 ||
+		  this.grid.get(dest) != null) {
+		return false;
+	}
+	critter.energy -= 1;
+	this.grid.set(vector, null);
+	this.grid.set(dest, critter);
+	return true;
+};
+
+actionTypes.eat = function(critter, vector, action){
+	var dest = this.checkDestination(action, vector);	
+	var atDest = dest != null && this.grid.get(dest);
+	if(!atDest || atDest.energy == null){
+		return false;
+	}
+	critter.energy += atDest.energy;
+	this.grid.set(dest, null);
+	return true;
+};
+
+actionTypes.reproduce = function(critter, vector, action) {
+	var baby = elementFromChar(this.legend, critter.originChar);
+	var dest = this.checkDestination(action, vector);
+	if   (dest == null || 
+		  critter.energy <= 2 * baby.energy ||
+		  this.grid.get(dest) != null){
+		return false;
+	}
+	critter.energy -= 2 * baby.energy;
+	this.grid.set(dest, baby);
+	return true;
+};
+
+// Populating the New World
+
+function Plant() {
+	this.energy = 3 + Math.random() * 4;
+}
+Plant.prototype.act = function(view){
+	if (this.energy > 15) {
+		var space = view.find(" ");
+		if (space) {
+			return {type: "reproduce", direction: space};
+		}
+		if (this.energy < 20) {
+			return {type: "grow"};
+		}
+	}
+};
+
+function PlantEater() {
+ 	this.energy = 20;
+ } 
+ PlantEater.prototype.act = function(view){
+ 	var space = view.find(" ");	
+ 	if (this.energy > 60 && space) {
+ 		return {type: "reproduce", direction: space};
+ 	}
+ 	var plant = view.find("*");
+ 	if (plant) {
+ 		return {type: "eat", direction: plant};
+ 	}
+ 	if (space) {
+ 		return {type: "move", direction: space};
+ 	}
+ };
+
+// Bringing it to Life
+
+// Artificial Stupidity
+
+function SmartPlantEater() {
+	// I'm initializing this smarter herbivore by having him head in a straight line (as opposed to randomly stumbling about)
+	this.energy = 20; 
+	this.direction = randomElement(directionNames);
+	this.memory = [];
+}
+SmartPlantEater.prototype.act = function(view){
+	var space = view.find(" ");
+	var food = view.find("*");
+	function lastMoves(array, thisMove) {
+		if   (array[array.length] == thisMove &&
+			  array[array.length -1] == thisMove &&
+			  array[array.length - 2] == thisMove){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	if (food && !lastMoves(this.memory, "eat")) {
+		this.memory.push("eat");
+		return {type: "eat", direction: food};
+		// this.direction = food;
+	}
+	var look = view.look(this.direction);
+	if (this.energy > 60 && space) {
+		this.memory.push("reproduce");
+		return {type: "reproduce", direction: space};
+	}
+	if (look == " " && !lastMoves(this.memory, "move")) {
+		this.memory.push("move");
+		return {type: "move", direction: this.direction};
+	}
+	if (look == "*" && !lastMoves(this.memory, "eat")) {
+		this.memory.push("eat");
+		return {type: "eat", direction: this.direction};
+	}
+	if(look != " " && look !== "*"){
+		// If my herbivore isn't facing a plant or a space he should probably face another direction. Giving him a little 45 degree clockwise spin...
+		this.direction = dirPlus(this.direction, 1);
+	}
+};
