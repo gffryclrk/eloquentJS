@@ -349,40 +349,36 @@ function SmartPlantEater() {
 	// I'm initializing this smarter herbivore by having him head in a straight line (as opposed to randomly stumbling about)
 	this.energy = 20; 
 	this.direction = randomElement(directionNames);
-	this.memory = [];
 }
 SmartPlantEater.prototype.act = function(view){
+	// I tried to have these guys eat food beside them as well as in front of them but that just made them too effective.
+	// As a result I tried to have them not do the same thing 3 times in a row but that didn't seem to help.
+	// For now I'm going to keep this simple implimentation which seems to work the best. 	
+
+	// var food = view.find("*");
+	// if (food) {
+	// 	return {type: "eat", direction: food};
+	// 	// this.direction = food;
+	// }
 	var space = view.find(" ");
-	var food = view.find("*");
-	function lastMoves(array, thisMove) {
-		if   (array[array.length] == thisMove &&
-			  array[array.length -1] == thisMove &&
-			  array[array.length - 2] == thisMove){
-			return true;
-		}else{
-			return false;
-		}
-	}
-	if (food && !lastMoves(this.memory, "eat")) {
-		this.memory.push("eat");
-		return {type: "eat", direction: food};
-		// this.direction = food;
-	}
 	var look = view.look(this.direction);
 	if (this.energy > 60 && space) {
-		this.memory.push("reproduce");
 		return {type: "reproduce", direction: space};
 	}
-	if (look == " " && !lastMoves(this.memory, "move")) {
-		this.memory.push("move");
+	if (look == " ") {
 		return {type: "move", direction: this.direction};
 	}
-	if (look == "*" && !lastMoves(this.memory, "eat")) {
-		this.memory.push("eat");
+	if (look == "*") {
+		
 		return {type: "eat", direction: this.direction};
 	}
-	if(look != " " && look !== "*"){
-		// If my herbivore isn't facing a plant or a space he should probably face another direction. Giving him a little 45 degree clockwise spin...
-		this.direction = dirPlus(this.direction, 1);
-	}
+	// if(look != " " && look !== "*"){
+	// 	// If my herbivore isn't facing a plant or a space he should probably face another direction. Giving him a little 45 degree clockwise spin...
+	// 	this.direction = dirPlus(this.direction, 1);
+	// }
+	// If my herbivore isn't facing a plant or a space he should probably face another direction. Giving him a little 45 degree clockwise spin...
+	// this.direction = dirPlus(this.direction, 1);
+	// Let's try making him head towards empty space
+	this.direction = space;
+
 };
