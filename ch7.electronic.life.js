@@ -313,10 +313,10 @@ Plant.prototype.act = function(view){
 		var space = view.find(" ");
 		if (space) {
 			return {type: "reproduce", direction: space};
-		}
-		if (this.energy < 20) {
-			return {type: "grow"};
-		}
+		}		
+	}
+	if (this.energy < 20) {
+		return {type: "grow"};
 	}
 };
 
@@ -347,66 +347,25 @@ function SmartPlantEater() {
 	this.direction = randomElement(directionNames);
 }
 SmartPlantEater.prototype.act = function(view){
-	// I tried to have these guys eat food beside them as well as in front of them but that just made them too effective.
-	// As a result I tried to have them not do the same thing 3 times in a row but that didn't seem to help.
-	// For now I'm going to keep this simple implimentation which seems to work the best. 	
-
-	// var food = view.find("*");
-	// if (food) {
-	// 	return {type: "eat", direction: food};
-	// 	// this.direction = food;
-	// }
-	var space = view.find(" "); //return element
-	var look = view.look(this.direction); //return character or else #
-	var food = view.findAll("*"); //return array
-	if (this.energy > 60 && space) {
+	var space = view.find(" ");
+	if(this.energy > 80 && space){
 		return {type: "reproduce", direction: space};
 	}
-	if (look == " ") {
+	var plants = view.findAll("*");
+	if(plants.length > 1){
+		return {type: "eat", direction: randomElement(plants)};
+	}
+	if(view.look(this.direction) == " "){
 		return {type: "move", direction: this.direction};
+	}else{
+		this.direction = view.find(" ");
 	}
-	if (food.length > 1) {
-		return {type: "eat", direction: view.find("*")};
-	}
-	// if(look != " " && look !== "*"){
-	// 	// If my herbivore isn't facing a plant or a space he should probably face another direction. Giving him a little 45 degree clockwise spin...
-	// 	this.direction = dirPlus(this.direction, 1);
-	// }
-	// If my herbivore isn't facing a plant or a space he should probably face another direction. Giving him a little 45 degree clockwise spin...
-	// this.direction = dirPlus(this.direction, 1);
-	// Let's try making him head towards empty space
-	this.direction = space;
-
 };
 
 function Tiger() {
 	this.energy = 50;
 	this.direction = randomElement(directionNames);
 }
-// Tiger.prototype.act = function(view){
-// 	var food = view.findAll("O");
-// 	if (food) {
-// 		return {type: "eat", direction: randomElement(food)};
-// 	}
-// 	if (view.look(this.direction) == " ") {
-// 		return {type: "move", direction: this.direction};
-// 	} else {
-// 		this.direction = dirPlus(this.direction, 4);
-// 	}
-
-// };
 Tiger.prototype.act = function(view){
-	var food = view.find("O");
-	// var space = view.find(" ");
-	if (food){
-		return {type: "eat", direction: food};
-	}
-	if (view.look(this.direction) == " ") {
-		return {type: "move", direction: this.direction};
-	} else {
-		this.direction = dirPlus(this.direction, 2);
-	}
-	if (this.energy > 100 && view.find(" ")){
-		return {type: "reproduce", direction: view.find(" ")};
-	}
+
 };
