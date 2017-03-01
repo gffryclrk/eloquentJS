@@ -272,9 +272,7 @@ actionTypes.grow = function(critter){
 
 actionTypes.move = function(critter, vector, action){
 	var dest = this.checkDestination(action, vector);
-	if (dest == null ||
-		  critter.energy <= 1 ||
-		  this.grid.get(dest) != null) {
+	if (dest == null || critter.energy <= 1 || this.grid.get(dest) != null) {
 		return false;
 	}
 	critter.energy -= 1;
@@ -297,9 +295,7 @@ actionTypes.eat = function(critter, vector, action){
 actionTypes.reproduce = function(critter, vector, action) {
 	var baby = elementFromChar(this.legend, critter.originChar);
 	var dest = this.checkDestination(action, vector);
-	if   (dest == null || 
-		  critter.energy <= 2 * baby.energy ||
-		  this.grid.get(dest) != null){
+	if(dest == null || critter.energy <= 2 * baby.energy || this.grid.get(dest) != null){
 		return false;
 	}
 	critter.energy -= 2 * baby.energy;
@@ -360,17 +356,17 @@ SmartPlantEater.prototype.act = function(view){
 	// 	return {type: "eat", direction: food};
 	// 	// this.direction = food;
 	// }
-	var space = view.find(" ");
-	var look = view.look(this.direction);
+	var space = view.find(" "); //return element
+	var look = view.look(this.direction); //return character or else #
+	var food = view.findAll("*"); //return array
 	if (this.energy > 60 && space) {
 		return {type: "reproduce", direction: space};
 	}
 	if (look == " ") {
 		return {type: "move", direction: this.direction};
 	}
-	if (look == "*") {
-		
-		return {type: "eat", direction: this.direction};
+	if (food.length > 1) {
+		return {type: "eat", direction: view.find("*")};
 	}
 	// if(look != " " && look !== "*"){
 	// 	// If my herbivore isn't facing a plant or a space he should probably face another direction. Giving him a little 45 degree clockwise spin...
@@ -381,4 +377,36 @@ SmartPlantEater.prototype.act = function(view){
 	// Let's try making him head towards empty space
 	this.direction = space;
 
+};
+
+function Tiger() {
+	this.energy = 50;
+	this.direction = randomElement(directionNames);
+}
+// Tiger.prototype.act = function(view){
+// 	var food = view.findAll("O");
+// 	if (food) {
+// 		return {type: "eat", direction: randomElement(food)};
+// 	}
+// 	if (view.look(this.direction) == " ") {
+// 		return {type: "move", direction: this.direction};
+// 	} else {
+// 		this.direction = dirPlus(this.direction, 4);
+// 	}
+
+// };
+Tiger.prototype.act = function(view){
+	var food = view.find("O");
+	// var space = view.find(" ");
+	if (food){
+		return {type: "eat", direction: food};
+	}
+	if (view.look(this.direction) == " ") {
+		return {type: "move", direction: this.direction};
+	} else {
+		this.direction = dirPlus(this.direction, 2);
+	}
+	if (this.energy > 100 && view.find(" ")){
+		return {type: "reproduce", direction: view.find(" ")};
+	}
 };
