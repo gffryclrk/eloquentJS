@@ -363,9 +363,36 @@ SmartPlantEater.prototype.act = function(view){
 };
 
 function Tiger() {
-	this.energy = 50;
+	this.energy = 100;
 	this.direction = randomElement(directionNames);
+	this.memory = [];
 }
 Tiger.prototype.act = function(view){
-
+	var space = view.find(" ");
+	this.memory.push(view.findAll("O").length);
+	if (this.memory.length > 3) {
+		this.memory.shift();
+	}
+	var foodSupply = this.memory.reduce(function(a,b){
+		return a + b;
+	}, 0);
+	// console.log(foodSupply);
+	if(this.energy > 200 && space){
+		return {type: "reproduce", direction: space};
+	}
+	food = view.find("O");
+	if (food && foodSupply > 2) {
+		return {type: "eat", direction: food };
+	}
+	if(view.look(this.direction) == " "){
+		return {type: "move", direction: this.direction};
+	}else{
+		if (food) {
+			this.direction = food;
+		}else{
+			this.direction = dirPlus(this.direction, 1);			
+		}
+		// this.direction = space;
+		// console.log(this.direction);
+	}
 };
