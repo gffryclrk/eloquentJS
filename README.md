@@ -1,5 +1,4 @@
-# Eloquent JS 
-## SOLUTIONS
+# Eloquent JS SOLUTIONS
 
 As I work through Eloquent JavaScript by Marijn Haverbeke (2nd Ed.) I'm publishing my exercise solutions up here for the world to see; warts and all. 
 
@@ -21,7 +20,7 @@ This has been an extremely valuable chapter so far. Working through a big chunk 
 
 A specific component of this chapter's project that I find interesting is how the grid is somewhat different to a traditional cartesian plane where (0, 0) is at the intersection of x & y. In this case the grid draws from the top down so that moving north corresponds to a negative increase to the y variable as opposed to a positive increase. For example, the north direction is (0, -1) in the destinations array as opposed to (0, 1) as I would expect from Grade 9 math. This is because the first elements in the grid array represent the top of the map and then progress downward. This is probably more analagous to how computers actually handle grid data such as how a .jpeg renders from the top down as it loads as opposed to bottom up (like a .bmp). 
 
-***Exercises:*** I have just finished both exercises and now have a working simulation. I just finished watching how my Tigers interact with the SmartPlantEaters and am quite pleased with the results. The code in my ch7.electronic.life.js file seems to run fine; in the console I run:
+***Exercises:*** I have just finished both exercises and now have a working simulation. I am pleased with how my Tigers interact with the SmartPlantEaters. The code in my ch7.electronic.life.js file seems to run fine; in the console I run:
 
 ```JavaScript
 var world = new LifelikeWorld(
@@ -50,4 +49,4 @@ var world = new LifelikeWorld(
 );
 ```
 
-Then, once I've initialized my object I simply use world.turn(); and world.toString(); to watch life take place. However, when I try to use the author's animation code on his website I get strange errors. I'm not sure if this is from my code, his code, or a combination of the two. Since I don't seem to run into errors when running my code on its own (combined, of course, with the chatper code) I haven't spent too much time worrying about it or trying to debug. 
+Then, once I've initialized my object I simply use world.turn(); and world.toString(); to watch life take place one step at a time. However, when I try to use the author's animation code on his website I get strange errors. I'm not sure if this is from my code, his code, or a combination of the two. Since I don't seem to run into errors when running my code on its own (combined, of course, with the chatper code) I haven't spent too much time worrying about it or trying to debug. 
