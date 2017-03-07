@@ -50,3 +50,9 @@ var world = new LifelikeWorld(
 ```
 
 Then, once I've initialized my object I simply use world.turn(); and world.toString(); to watch life take place one step at a time. However, when I try to use the author's animation code on his website I get strange errors. I'm not sure if this is from my code, his code, or a combination of the two. Since I don't seem to run into errors when running my code on its own (combined, of course, with the chatper code) I haven't spent too much time worrying about it or trying to debug. 
+
+## CHAPTER 9: Regular Expressions
+
+***ch9.replace.method.js***: This is a curious little bit of code that interested me. I wanted to load it in the browser and set a breakpoint and watch it function; I wasn't sure what arguments were being passed. Both amount & unit seem fairly obvious and are explained in text but I wasn't sure what was being passed to the first argument, match. It is the entire match which I suppose, in hindsight, seems intuitive. 
+
+***Exercises:*** As usual, Regular Expression are aggravating. Without visual tools like Debuggex or Rubular they would be even more so. I didn't have too much trouble with any of the Golf exercises except the last one, number 7, which I couldn't quite solve. I eventually got so frustrated I had to look at the solution. I was very close and seeing the answer didn't make me feel a whole lot better but did help me learn. 
