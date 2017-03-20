@@ -59,7 +59,16 @@ Then, once I've initialized my object I simply use world.turn(); and world.toStr
 
 ## CHAPTER 10: Modules
 
-I'm still working my way through this chapter. Useful reading:
+This was a difficult chapter but I enjoyed it. It seemed to be more theory than anything else, which I believe is useful. In order to understand the examples in the text I was required to do a lot of reading. I spent a lot of time doing searches and trying to understand some important programming concepts and how they apply within the context of JavaScript. I believe some important concepts are:
+
+* Function Declarations vs Function Expression
+* Variable Scope & Closures
+* Immediately invoked function expressions (IIFE)
+* Functions which return functions 
+
+The last one I find very interesting. I kept seeing code that contained empty parenthesis, such as foo(); or else var foo = function(){ }();. The explanation (I think) is that the function expression, var foo, is referencing an anonymous function that returns a function. To invoke that function you must call it either when you call foo, such as foo(); or else in the case above by putting the parenthesis within the expression itself, hence the parenthesis after the code block. Strange and beautiful. 
+
+***Useful links:***
 
 * http://stackoverflow.com/questions/111102/how-do-javascript-closures-work
 * http://www.adequatelygood.com/JavaScript-Scoping-and-Hoisting.html
