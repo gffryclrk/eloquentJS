@@ -1,4 +1,4 @@
-# Eloquent JS SOLUTIONS
+# Eloquent JS Solutions
 
 As I work through Eloquent JavaScript by Marijn Haverbeke (2nd Ed.) I'm publishing my exercise solutions up here for the world to see; warts and all. 
 
@@ -53,9 +53,9 @@ Then, once I've initialized my object I simply use world.turn(); and world.toStr
 
 ## CHAPTER 9: Regular Expressions
 
-***ch9.replace.method.js***: This is a curious little bit of code that interested me. I wanted to load it in the browser and set a breakpoint and watch it function; I wasn't sure what arguments were being passed. Both amount & unit seem fairly obvious and are explained in text but I wasn't sure what was being passed to the first argument, match. It is the entire match which I suppose, in hindsight, seems intuitive. 
+**ch9.replace.method.js**: This is a curious little bit of code that interested me. I wanted to load it in the browser and set a breakpoint and watch it function; I wasn't sure what arguments were being passed. Both amount & unit seem fairly obvious and are explained in text but I wasn't sure what was being passed to the first argument, match. It is the entire match which I suppose, in hindsight, seems intuitive. 
 
-***Exercises:*** As usual, Regular Expression are aggravating. Without visual tools like Debuggex or Rubular they would be even more so. I didn't have too much trouble with any of the Golf exercises except the last one, number 7, which I couldn't quite solve. I eventually got so frustrated I had to look at the solution. I was very close and seeing the answer didn't make me feel a whole lot better but did help me learn. 
+**Exercises:** As usual, Regular Expression are aggravating. Without visual tools like Debuggex or Rubular they would be even more so. I didn't have too much trouble with any of the Golf exercises except the last one, number 7, which I couldn't quite solve. I eventually got so frustrated I had to look at the solution. I was very close and seeing the answer didn't make me feel a whole lot better but did help me learn. 
 
 ## CHAPTER 10: Modules
 
@@ -68,10 +68,14 @@ This was a difficult chapter but I enjoyed it. It seemed to be more theory than 
 
 The last one I find very interesting. I kept seeing code that contained empty parenthesis, such as foo(); or else var foo = function(){ }();. The explanation (I think) is that the function expression, var foo, is referencing an anonymous function that returns a function. To invoke that function you must call it either when you call foo, such as foo(); or else in the case above by putting the parenthesis within the expression itself, hence the parenthesis after the code block. Strange and beautiful. 
 
-***Useful links:***
+**Useful links:**
 
 * http://stackoverflow.com/questions/111102/how-do-javascript-closures-work
 * http://www.adequatelygood.com/JavaScript-Scoping-and-Hoisting.html
 * https://en.wikipedia.org/wiki/Immediately-invoked_function_expression
 * http://stackoverflow.com/questions/336859/javascript-function-declaration-syntax-var-fn-function-vs-function-fn?noredirect=1&lq=1
 * http://stackoverflow.com/questions/1013385/what-is-the-difference-between-a-function-expression-vs-declaration-in-javascrip
+
+## CHAPTER 11: A Programming Language ##
+
+Working through the text I have found it useful to use the example provided `parse("+(a, 10)")`. As usual I have worked through the lines in the code to see the variables as the program executes and have made notes of variables and returns at different stages. Since the program is recursive I found it useful to refer to variables at different times to when they are called. For example, program(1) is the variable the first time it this part of the program is reached, program(2) the second, and so on. 
